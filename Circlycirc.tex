@@ -1,0 +1,67 @@
+% This work is licensed under a Creative Commons Attribution 3.0 Unported License
+
+% author: Clemens Korner
+
+\documentclass[11pt,
+    parskip=half]
+    {scrartcl}
+
+\usepackage{tikz}
+\usepackage{amsmath}
+
+\newcommand{\drawcirclycirc}[1] {
+    \begin{tikzpicture}
+        \tikzstyle{cut}=[dashed]
+        \tikzstyle{major}=[color=blue!80, line width=6pt]
+        \tikzstyle{minor}=[color=orange!80, line width=6pt]
+        \tikzstyle{chordcircle} = []
+
+        \ifnum #1=1
+            \tikzstyle{chordcircle}+=[dashed, fill=white]
+        \fi
+
+        % inner and outer circle
+        \draw[fill] (0, 0) circle (0.05);
+        \draw[cut] (0, 0) circle (7.5);
+
+        % colored lines and nodes for major and minor chords
+        \ifnum #1=1
+            \draw[major] (0, 0) circle (6);
+            \draw[minor] (0, 0) circle (4);
+            \draw[major] (-1, 0.75) -- ++(1, 0) node[right, black] {Major};
+            \draw[minor] (-1, -0.75) -- ++(1, 0) node[right, black] {Minor};
+        \fi
+
+        \foreach \i in {0, ..., 11} {
+            % angle of the chord names
+            \tikzstyle{chord}=[rotate={360-360*\i/12}]
+
+            % calculate coordinates for chord nodes
+            \coordinate (majorchord);
+            \coordinate (minorchrord);
+            \ifnum #1=1
+                \coordinate (majorchord) at ({5*cos(90-360*\i/12)}, {5*sin(90-360*\i/12)});
+                \coordinate (minorchord) at ({3*cos(90-360*\i/12)}, {3*sin(90-360*\i/12)});
+            \else
+                \coordinate (majorchord) at ({6*cos(90-360*\i/12)}, {6*sin(90-360*\i/12)});
+                \coordinate (minorchord) at ({4*cos(90-360*\i/12)}, {4*sin(90-360*\i/12)});
+            \fi
+
+            \draw[chordcircle] ({6*cos(360*\i/12)}, {6*sin(360*\i/12)}) circle (0.7);
+            \draw[chordcircle] ({4*cos(360*\i/12)}, {4*sin(360*\i/12)}) circle (0.7);
+            \node[chord] at (majorchord) {\pgfmathparse{\major[\i]}\pgfmathresult};
+            \node[chord] at (minorchord) {\pgfmathparse{\minor[\i]}\pgfmathresult};
+        }
+    \end{tikzpicture}
+}
+
+\newcommand{\Text}[1]{\text{\textnormal{#1}}}
+
+\begin{document}
+    \def\major{{"C", "C$\sharp$/D$\flat$", "D", "D$\sharp$/E$\flat$", "E", "F", "F$\sharp$/G$\flat$", "G", "G$\sharp$/A$\flat$", "A", "A$\sharp$/B$\flat$", "B"}}
+    \def\minor{{"a", "a$\sharp$/b$\flat$", "b", "c", "c$\sharp$/d$\flat$", "d", "d$\sharp$/e$\flat$", "f", "f$\sharp$/g$\flat$", "g$\sharp$/a$\flat$", "a", "a$\sharp$/b$\flat$"}}
+
+    \drawcirclycirc{1}
+
+    \drawcirclycirc{0}
+\end{document}
